@@ -74,7 +74,7 @@ if (NODE_ENV === 'production') {
 
 app.listen(process.env.PORT, () => {
     console.log(`
-        Started the VROOM SPA Server.
+        Started the Quicktris Server.
         mode: ${NODE_ENV} - port: ${PORT}
     `);
 });

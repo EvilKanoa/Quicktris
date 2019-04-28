@@ -5,7 +5,7 @@ class App extends PureComponent {
         return (
             <div id="app">
                 <div style={{ padding: '4rem', margin: 'auto', textAlign: 'center' }}>
-                    VROOM App is up and running!
+                    Quicktris is up and running!
                 </div>
             </div>
         );

@@ -54,7 +54,7 @@ module.exports = (env = {}) => ({
         }, {})),
         new CleanWebpackPlugin(['dist']),
         new HtmlWebpackPlugin({
-            title: 'VROOM App',
+            title: 'Quicktris',
             filename: 'index.html',
             hash: env.NODE_ENV !== 'development',
             template: 'root.html',

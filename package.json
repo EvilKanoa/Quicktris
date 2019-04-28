@@ -1,5 +1,5 @@
 {
-  "name": "vroom",
+  "name": "quicktris",
   "version": "0.0.1",
   "private": true,
   "license": "MIT",
@@ -7,7 +7,7 @@
     "test": "echo \"I'm lazy and need to add tests...\" && exit 0",
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "server": "NODE_ENV=production nodemon server/app.js",
-    "prod": "npm run build && npm run server",
+    "prod": "yarn build && yarn server",
     "dev": "NODE_ENV=development nodemon server/app.js",
     "start": "npm run dev"
   },

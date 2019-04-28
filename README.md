@@ -1,4 +1,4 @@
-# VROOM: Quick start for a Express & Redux app
+# Quicktris: Just another browser-based Tetris clone
 
 #### Developing
 For development:
@@ -7,7 +7,7 @@ For development:
 3. Run `npm install`.
 4. Start the development server using `npm run dev`.
 
-#### Building and Deploying Editor
+#### Building and Deploying
 For a production ready build and server:
 1. Clone repo.
 2. Copy `.env.sample` into `.env` and configure it as required.
