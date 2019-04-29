@@ -70,10 +70,12 @@ const getBlockPieces = ({ type, rotation, x, y }) =>
         })
     );
 
-const generateGrid = (blocks, falling) => {
-    const grid = Array(10)
-        .fill(undefined)
-        .map(() => Array(20).fill(null));
+const generateGrid = (original = null, ...blocks) => {
+    const grid = original
+        ? original.map((column) => [...column])
+        : Array(10)
+            .fill(undefined)
+            .map(() => Array(20).fill(null));
 
     const addBlock = ({ type, rotation, x, y }) => {
         const pieces = blockPieces[`${type}${rotation}`];
@@ -83,9 +85,6 @@ const generateGrid = (blocks, falling) => {
     };
 
     blocks.forEach(addBlock);
-    if (falling) addBlock(falling);
-    // TODO: Add falling shadow block
-
     return grid;
 };
 
@@ -93,7 +92,7 @@ const isValidBlock = (block, grid) => !getBlockPieces(block)
     .some(({ x, y }) => x < 0 || x > 9 || y < 0 || (grid && grid[x][y]));
 
 const getNewGame = () => ({
-    blocks: [],
+    grid: generateGrid(),
     queue: generateQueue(),
     hold: null,
     falling: {
@@ -140,12 +139,12 @@ class Game extends Component {
 
     controller = {
         move: (direction) => {
-            const {falling, blocks} = this.state;
+            const {falling, grid} = this.state;
             const newFalling = {
                 ...falling,
                 x: falling.x + (direction === 'right' ? +1 : -1)
             };
-            if (isValidBlock(newFalling, generateGrid(blocks))) {
+            if (isValidBlock(newFalling, grid)) {
                 this.setState({
                     falling: {
                         ...falling,
@@ -155,8 +154,7 @@ class Game extends Component {
             }
         },
         slowDrop: () => {
-            const {falling, blocks} = this.state;
-            const grid = generateGrid(blocks);
+            const {falling, grid} = this.state;
 
             const newFalling = {
                 ...falling,
@@ -172,9 +170,7 @@ class Game extends Component {
             }
         },
         drop: () => {
-            const {falling, blocks} = this.state;
-
-            const grid = generateGrid(blocks);
+            const {falling, grid} = this.state;
             const newFalling = { ...falling };
 
             if (!isValidBlock(newFalling, grid)) return;
@@ -187,7 +183,7 @@ class Game extends Component {
             this.tick();
         },
         rotate: (direction) => {
-            const {falling, blocks} = this.state;
+            const {falling, grid} = this.state;
 
             let rotation = falling.rotation + (direction === 'right' ? +1 : -1);
             if (rotation > 3) rotation = 0;
@@ -197,7 +193,7 @@ class Game extends Component {
                 ...falling,
                 rotation
             };
-            if (isValidBlock(newFalling, generateGrid(blocks))) {
+            if (isValidBlock(newFalling, grid)) {
                 this.setState({
                     falling: {
                         ...falling,
@@ -255,9 +251,8 @@ class Game extends Component {
     };
 
     tick = () => {
-        const {blocks, falling, queue} = this.state;
-        const grid = generateGrid(blocks, false);
-        const updateState = { blocks };
+        const {falling, queue, grid} = this.state;
+        const updateState = {};
 
         // check if block falls or stops
         const nextFalling = {
@@ -270,7 +265,7 @@ class Game extends Component {
                 y: falling.y - 1
             };
         } else {
-            updateState.blocks.push(falling);
+            updateState.grid = generateGrid(grid, falling);
             if (falling.y === 20) {
                 alert(`Game Over!`);
                 this.controller.restart();
@@ -290,8 +285,7 @@ class Game extends Component {
 
     render() {
         const {height} = this.props;
-        const {blocks, falling} = this.state;
-        const grid = generateGrid(blocks, falling);
+        const grid = generateGrid(this.state.grid, this.state.falling);
 
         return (
             <div
