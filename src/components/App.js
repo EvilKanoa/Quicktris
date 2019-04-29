@@ -1,12 +1,12 @@
 import React, {PureComponent} from 'react';
 
+import Game from 'components/game/Game';
+
 class App extends PureComponent {
     render() {
         return (
             <div id="app">
-                <div style={{ padding: '4rem', margin: 'auto', textAlign: 'center' }}>
-                    Quicktris is up and running!
-                </div>
+                <Game/>
             </div>
         );
     }
