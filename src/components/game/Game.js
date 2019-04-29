@@ -252,7 +252,7 @@ class Game extends Component {
 
     tick = () => {
         const {falling, queue, grid} = this.state;
-        const updateState = {};
+        const updateState = { grid };
 
         // check if block falls or stops
         const nextFalling = {
@@ -277,6 +277,24 @@ class Game extends Component {
                     x: 4,
                     y: 20
                 };
+            }
+        }
+
+        // check if any lines were completed
+        for (let y = 19; y >= 0; y--) {
+            let completed = true;
+            for (let x = 0; x < 10; x++) {
+                if (!updateState.grid[x][y]) {
+                    completed = false;
+                }
+            }
+
+            if (completed) {
+                updateState.grid = updateState.grid.map((column) => {
+                    const newColumn = [...column, null];
+                    newColumn.splice(y, 1);
+                    return newColumn;
+                });
             }
         }
 
