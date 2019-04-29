@@ -23,7 +23,7 @@ module.exports = (env = {}) => ({
                 ]
             },
             {
-                test: /\.(png|svg|jpg|gif|jpeg|ico)$/,
+                test: /\.(png|svg|jpg|gif|jpeg|ico|mp3|wav)$/,
                 exclude: /node_modules/,
                 use: [
                     'file-loader'
