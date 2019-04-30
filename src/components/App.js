@@ -1,15 +1,16 @@
-import React, {PureComponent} from 'react';
+import React from 'react';
 
+import useViewport from 'hooks/useViewport';
 import Game from 'components/game/Game';
 
-class App extends PureComponent {
-    render() {
-        return (
-            <div id="app">
-                <Game/>
-            </div>
-        );
-    }
-}
+const App = () => {
+    const {height} = useViewport();
+
+    return (
+        <div id="app">
+            <Game height={height}/>
+        </div>
+    );
+};
 
 export default App;

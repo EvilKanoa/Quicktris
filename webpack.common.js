@@ -41,6 +41,7 @@ module.exports = (env = {}) => ({
         ]
     },
     resolve: {
+        alias: { 'react-dom': '@hot-loader/react-dom' },
         modules: [
             path.resolve(__dirname, 'src'),
             'node_modules',
