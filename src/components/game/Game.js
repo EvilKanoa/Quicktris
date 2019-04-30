@@ -1,20 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
+import {getGame, getKeybindings, setGame, resetGame} from'logic/reducer';
 
 import GameGrid from './GameGrid';
 
 const noop = () => {};
-
-const keybindings = {
-    moveLeft: 'ArrowLeft',
-    moveDown: 'ArrowDown',
-    moveRight: 'ArrowRight',
-    drop: 'ArrowUp',
-    rotateLeft: 'a',
-    rotateRight: 's',
-    hold: 'd',
-    restart: 'Enter'
-};
 
 const generateQueue = (count = 9999) => Array(count)
     .fill(undefined)
@@ -91,61 +84,33 @@ const generateGrid = (original = null, ...blocks) => {
 const isValidBlock = (block, grid) => !getBlockPieces(block)
     .some(({ x, y }) => x < 0 || x > 9 || y < 0 || (grid && grid[x][y]));
 
-const getNewGame = () => ({
-    grid: generateGrid(),
-    queue: generateQueue(),
-    hold: null,
-    falling: {
-        type: generateQueue(1)[0],
-        rotation: 0,
-        x: 4,
-        y: 20
-    }
-});
-
 class Game extends Component {
     static propTypes = {
-        controller: PropTypes.func,
         height: PropTypes.number,
-        speed: PropTypes.number,
-        useControls: PropTypes.bool,
     };
 
     static defaultProps = {
-        controller: noop,
         height: 600,
-        speed: 1,
-        useControls: true,
     };
-
-    constructor(props) {
-        super(props);
-
-        props.controller(this.controller);
-
-        this.state = getNewGame();
-    }
 
     componentDidMount() {
         this.updateTick(null);
-        if (this.props.useControls) {
-            window.addEventListener('keydown', this.onKeydown);
-        }
+        window.addEventListener('keydown', this.onKeydown);
     }
 
     componentDidUpdate(prevProps) {
-        this.updateTick(prevProps.speed);
+        this.updateTick(prevProps.game.speed);
     }
 
     controller = {
         move: (direction) => {
-            const {falling, grid} = this.state;
+            const {falling, grid} = this.props.game;
             const newFalling = {
                 ...falling,
                 x: falling.x + (direction === 'right' ? +1 : -1)
             };
             if (isValidBlock(newFalling, grid)) {
-                this.setState({
+                this.props.setGame({
                     falling: {
                         ...falling,
                         x: falling.x + (direction === 'right' ? +1 : -1)
@@ -154,14 +119,14 @@ class Game extends Component {
             }
         },
         slowDrop: () => {
-            const {falling, grid} = this.state;
+            const {falling, grid} = this.props.game;
 
             const newFalling = {
                 ...falling,
                 y: falling.y - 1
             };
             if (isValidBlock(newFalling, grid) && isValidBlock(falling, grid)) {
-                this.setState({
+                this.props.setGame({
                     falling: {
                         ...falling,
                         y: falling.y - 1
@@ -170,7 +135,7 @@ class Game extends Component {
             }
         },
         drop: () => {
-            const {falling, grid} = this.state;
+            const {falling, grid} = this.props.game;
             const newFalling = { ...falling };
 
             if (!isValidBlock(newFalling, grid)) return;
@@ -179,11 +144,11 @@ class Game extends Component {
                 newFalling.y--;
             }
             newFalling.y++;
-            this.setState({ falling: newFalling });
+            this.props.setGame({ falling: newFalling });
             this.tick();
         },
         rotate: (direction) => {
-            const {falling, grid} = this.state;
+            const {falling, grid} = this.props.game;
 
             let rotation = falling.rotation + (direction === 'right' ? +1 : -1);
             if (rotation > 3) rotation = 0;
@@ -194,7 +159,7 @@ class Game extends Component {
                 rotation
             };
             if (isValidBlock(newFalling, grid)) {
-                this.setState({
+                this.props.setGame({
                     falling: {
                         ...falling,
                         rotation: rotation > 3 ? 0 : (rotation < 0 ? 3 : rotation)
@@ -206,21 +171,12 @@ class Game extends Component {
 
         },
         restart: () => {
-            this.setState(getNewGame());
+            this.props.resetGame();
         }
-    };
-
-    updateTick = (prevSpeed) => {
-        const {speed} = this.props;
-        if (prevSpeed === speed) return;
-
-        if (this.tickInterval) {
-            clearInterval(this.tickInterval);
-        }
-        this.tickInterval = setInterval(this.tick, 1000 / speed);
     };
 
     onKeydown = ({ key }) => {
+        const {keybindings} = this.props;
         switch (key) {
             case keybindings.moveLeft:
                 this.controller.move('left');
@@ -250,8 +206,18 @@ class Game extends Component {
         }
     };
 
+    updateTick = (prevSpeed) => {
+        const {speed} = this.props.game;
+        if (prevSpeed === speed) return;
+
+        if (this.tickInterval) {
+            clearInterval(this.tickInterval);
+        }
+        this.tickInterval = setInterval(this.tick, 1000 / speed);
+    };
+
     tick = () => {
-        const {falling, queue, grid} = this.state;
+        const {falling, queue, grid} = this.props.game;
         const updateState = { grid };
 
         // check if block falls or stops
@@ -298,12 +264,12 @@ class Game extends Component {
             }
         }
 
-        this.setState(updateState);
+        this.props.setGame(updateState);
     };
 
     render() {
-        const {height} = this.props;
-        const grid = generateGrid(this.state.grid, this.state.falling);
+        const {height, game} = this.props;
+        const grid = generateGrid(game.grid, game.falling);
 
         return (
             <GameGrid
@@ -314,4 +280,13 @@ class Game extends Component {
     }
 }
 
-export default Game;
+export default connect(
+    (state) => ({
+        game: getGame(state),
+        keybindings: getKeybindings(state)
+    }),
+    (dispatch) => bindActionCreators({
+        setGame: (game) => setGame('main', game),
+        resetGame
+    }, dispatch)
+)(Game);
