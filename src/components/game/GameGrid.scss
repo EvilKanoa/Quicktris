@@ -1,0 +1,27 @@
+.game-grid {
+  width: 100%;
+  height: 100%;
+
+  background: #808080;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  grid-gap: 0;
+
+  .grid-block {
+    &.grid-block-background {
+      background: black;
+      border: 1px solid rgba(128, 128, 128, 0.25);
+    }
+
+    &.grid-block-t { background: #9F23ED; }
+    &.grid-block-s { background: #26EE2B; }
+    &.grid-block-z { background: #ED0C19; }
+    &.grid-block-j { background: #0A22ED; }
+    &.grid-block-l { background: #ED9F26; }
+    &.grid-block-i { background: #29F0F0; }
+    &.grid-block-o { background: #F0EE34; }
+  }
+}

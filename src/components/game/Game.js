@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import './Game.scss';
+import GameGrid from './GameGrid';
 
 const noop = () => {};
 
@@ -306,31 +306,10 @@ class Game extends Component {
         const grid = generateGrid(this.state.grid, this.state.falling);
 
         return (
-            <div
-                className='game'
-                style={{
-                    width: `${(height / 22) * 12}px`,
-                    height: `${height}px`
-                }}
-            >
-                <div className='game-grid'>
-                    <div className='grid-background'/>
-                    {grid.flatMap((column, x) =>
-                        column.map((type, y) => type && (
-                            <div
-                                className={`block ${type}-block`}
-                                key={`${x},${y}`}
-                                style={{
-                                    gridColumnStart: x + 2,
-                                    gridColumnEnd: x + 2,
-                                    gridRowStart: 21 - y,
-                                    gridRowEnd: 21 - y
-                                }}
-                            />
-                        ))
-                    )}
-                </div>
-            </div>
+            <GameGrid
+                height={height}
+                grid={grid}
+            />
         );
     }
 }
