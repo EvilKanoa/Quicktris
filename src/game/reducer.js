@@ -10,7 +10,6 @@ import {
 } from 'game/gameUtils';
 
 export default (state = initialState, { type, ...action }) => {
-    console.log(type);
     switch (type) {
         case 'ADD_GAME': return {
             ...state,
