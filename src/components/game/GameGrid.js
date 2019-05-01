@@ -1,5 +1,6 @@
 import React from 'react';
 import {defaultMemoize} from 'reselect';
+import PropTypes from 'prop-types';
 
 import './GameGrid.scss';
 
@@ -33,5 +34,10 @@ const GameGrid = ({ height = 600, grid }) => (
         {renderGrid(grid)}
     </div>
 );
+
+GameGrid.propTypes = {
+    height: PropTypes.number,
+    grid: PropTypes.arrayOf(PropTypes.array).isRequired
+};
 
 export default GameGrid;

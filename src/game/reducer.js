@@ -5,7 +5,8 @@ import {
     applyGameTick,
     move,
     drop,
-    rotate
+    rotate,
+    hold
 } from 'game/gameUtils';
 
 export default (state = initialState, { type, ...action }) => {
@@ -57,6 +58,17 @@ export default (state = initialState, { type, ...action }) => {
             }
         };
 
+        case 'PAUSE_GAME': return {
+            ...state,
+            games: {
+                ...state.games,
+                [action.id]: state.games[action.id] && {
+                    ...state.games[action.id],
+                    paused: true
+                }
+            }
+        };
+
         case 'MOVE_FALLING': return {
             ...state,
             games: {
@@ -80,6 +92,14 @@ export default (state = initialState, { type, ...action }) => {
                 ...state.games,
                 [action.id]: state.games[action.id]
                     && rotate(state.games[action.id], action.direction)
+            }
+        };
+
+        case 'HOLD_FALLING': return {
+            ...state,
+            games: {
+                ...state.games,
+                [action.id]: state.games[action.id] && hold(state.games[action.id])
             }
         };
 

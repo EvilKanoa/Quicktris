@@ -13,7 +13,8 @@ const initialState = {
             rotateLeft: 'a',
             rotateRight: 's',
             hold: 'd',
-            restart: 'Enter'
+            restart: 'Enter',
+            pause: 'p'
         }
     }
 };

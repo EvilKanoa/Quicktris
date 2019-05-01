@@ -42,6 +42,8 @@ export const randomBlock = () => {
     }
 };
 
+export const getSpeedDelay = (speed) => 1000 / Math.pow(2, speed - 1);
+
 export const generateQueue = (count = 999) => Array(count)
     .fill(undefined)
     .map(randomBlock);
@@ -71,7 +73,8 @@ export const generateNewGame = (defaults = {}) => ({
         backToBacks: 0,
         allClears: 0
     },
-    ...defaults
+    ...defaults,
+    paused: true
 });
 
 export const cloneGrid = (grid) => grid.map((column) => [...column]);
@@ -154,6 +157,10 @@ export const rotate = (game, direction) => {
             falling: newFalling
         };
     }
+};
+
+export const hold = (game) => {
+    return game;
 };
 
 export const applyGravity = (game) => {
