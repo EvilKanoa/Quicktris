@@ -38,7 +38,7 @@ const GameController = connect(
         drop: () => dropFalling(gameId),
         rotate: (direction) => rotateFalling(gameId, direction),
         hold: () => holdFalling(gameId),
-        reset: () => resetGame(gameId),
+        reset: (defaults) => resetGame(gameId, defaults),
         run: () => runGame(gameId),
         pause: () => pauseGame(gameId)
     }, dispatch)
@@ -67,7 +67,7 @@ const GameController = connect(
             case keybindings.rotateLeft: return rotate('left');
             case keybindings.rotateRight: return rotate('right');
             case keybindings.hold: return allowHold && hold();
-            case keybindings.restart: return allowRestart && reset();
+            case keybindings.restart: return allowRestart && reset({ paused });
             case keybindings.pause: return allowPause && paused
                 ? run()
                 : pause();

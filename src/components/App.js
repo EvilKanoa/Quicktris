@@ -1,7 +1,7 @@
 import React from 'react';
 
 import useViewport from 'hooks/useViewport';
-import Game from 'components/game/Game';
+import Game from 'components/Game';
 
 const App = () => {
     const {height} = useViewport();

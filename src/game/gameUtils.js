@@ -19,10 +19,10 @@ export const blockOffsets = {
     'l1': [{ x: +0, y: +0 }, { x: +0, y: -1 }, { x: +1, y: +0 }, { x: +2, y: +0 }],
     'l2': [{ x: +0, y: +0 }, { x: +1, y: +0 }, { x: +1, y: -1 }, { x: +1, y: -2 }],
     'l3': [{ x: +0, y: -1 }, { x: +1, y: -1 }, { x: +2, y: +0 }, { x: +2, y: -1 }],
-    'i0': [{ x: +0, y: +0 }, { x: +0, y: -1 }, { x: +0, y: -2 }, { x: +0, y: -3 }],
-    'i1': [{ x: +0, y: +0 }, { x: +1, y: +0 }, { x: +2, y: +0 }, { x: +3, y: +0 }],
-    'i2': [{ x: +0, y: +0 }, { x: +0, y: -1 }, { x: +0, y: -2 }, { x: +0, y: -3 }],
-    'i3': [{ x: +0, y: +0 }, { x: +1, y: +0 }, { x: +2, y: +0 }, { x: +3, y: +0 }],
+    'i0': [{ x: +1, y: +0 }, { x: +1, y: -1 }, { x: +1, y: -2 }, { x: +1, y: -3 }],
+    'i1': [{ x: +0, y: -1 }, { x: +1, y: -1 }, { x: +2, y: -1 }, { x: +3, y: -1 }],
+    'i2': [{ x: +1, y: +0 }, { x: +1, y: -1 }, { x: +1, y: -2 }, { x: +1, y: -3 }],
+    'i3': [{ x: +0, y: -1 }, { x: +1, y: -1 }, { x: +2, y: -1 }, { x: +3, y: -1 }],
     'o0': [{ x: +0, y: +0 }, { x: +0, y: -1 }, { x: +1, y: +0 }, { x: +1, y: -1 }],
     'o1': [{ x: +0, y: +0 }, { x: +0, y: -1 }, { x: +1, y: +0 }, { x: +1, y: -1 }],
     'o2': [{ x: +0, y: +0 }, { x: +0, y: -1 }, { x: +1, y: +0 }, { x: +1, y: -1 }],
@@ -73,8 +73,8 @@ export const generateNewGame = (defaults = {}) => ({
         backToBacks: 0,
         allClears: 0
     },
-    ...defaults,
-    paused: true
+    paused: true,
+    ...defaults
 });
 
 export const cloneGrid = (grid) => grid.map((column) => [...column]);
@@ -148,15 +148,25 @@ export const rotate = (game, direction) => {
     else if (rotation < 0) rotation = 3;
 
     const newFalling = { ...falling, rotation };
+    const newFallingLeft1 = { ...newFalling, x: newFalling.x - 1 };
+    const newFallingLeft2 = { ...newFalling, x: newFalling.x - 2 };
+    const newFallingRight = { ...newFalling, x: newFalling.x + 1 };
 
-    if (isCollision(newFalling, grid)) {
-        return game;
-    } else {
-        return {
-            ...game,
-            falling: newFalling
-        };
+    let updateFalling = falling;
+    if (!isCollision(newFalling, grid)) {
+        updateFalling = newFalling;
+    } else if (!isCollision(newFallingLeft1, grid)) {
+        updateFalling = newFallingLeft1;
+    } else if (!isCollision(newFallingRight, grid)) {
+        updateFalling = newFallingRight;
+    } else if (!isCollision(newFallingLeft2, grid)) {
+        updateFalling = newFallingLeft2;
     }
+
+    return {
+        ...game,
+        falling: updateFalling
+    };
 };
 
 export const hold = (game) => {
@@ -179,7 +189,7 @@ export const applyGravity = (game) => {
         if (falling.y === 20) {
             alert(`Game Over!`);
             // TODO: Determine flow for end game
-            return game;
+            return { ...game, paused: true };
         }
 
         falling = {
