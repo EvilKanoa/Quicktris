@@ -169,9 +169,16 @@ export const rotate = (game, direction) => {
     };
 };
 
-export const hold = (game) => {
-    return game;
-};
+export const hold = ({ hold, falling, ...game }) => ({
+    ...game,
+    hold: falling.type,
+    falling: {
+        type: hold || game.queue.pop(),
+        rotation: 0,
+        x: 4,
+        y: 20
+    }
+});
 
 export const applyGravity = (game) => {
     if (!game) return undefined;
